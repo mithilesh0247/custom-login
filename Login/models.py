@@ -6,4 +6,4 @@ from datetime import datetime
 class count_user(models.Model):
     username=models.CharField(max_length=50)
     count=models.IntegerField()
-    loginAt=models.DateTimeField(default=datetime.now())
+    loginAt=models.CharField(max_length=5000)

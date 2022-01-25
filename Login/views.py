@@ -5,6 +5,7 @@ from .forms import *
 from django.contrib.auth import authenticate,get_user_model,login,logout
 from django.contrib.auth.decorators import login_required
 from Login.models import count_user
+import json
 # Create your views here.
 
 @login_required(login_url='login/')
@@ -21,11 +22,15 @@ def login_view(request):
         login(request, user)
         if next:
             countd = count_user.objects.filter(username=username)
-            if len(countd) > 0:
-                data = count_user(username=username,count=countd.count + 1,loginAt=datetime.now())
+            if len(countd)>0:
+                data = count_user.objects.get(username=username)
+                data.count += 1
+                time = json.loads(data.loginAt)
+                time.append(str(datetime.now()))   
+                data.loginAt = json.dumps(time)
                 data.save()
             else:
-                data = count_user(username=username,count=1,loginAt=datetime.now())
+                data = count_user(username=username,count=1,loginAt=json.dumps([str(datetime.now())]))
                 data.save()    
             return redirect(next)
         return redirect('/')
